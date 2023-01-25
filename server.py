@@ -26,13 +26,15 @@ import socketserver
 
 # try: curl -v -X GET http://127.0.0.1:8080/
 
+html = open('www/index.html','r').read()
 
 class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
         self.data = self.request.recv(1024).strip()
         print ("Got a request of: %s\n" % self.data)
-        self.request.sendall(bytearray("OK",'utf-8'))
+        self.request.sendall(bytearray(f'HTTP/1.0 200 OK\n\n{html}', 'utf-8'))
+
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080

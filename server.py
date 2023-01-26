@@ -34,18 +34,28 @@ class MyWebServer(socketserver.BaseRequestHandler):
     def handle(self):
         self.data = self.request.recv(1024).strip()
         self.data = self.data.decode('utf-8')
-        #print ("Got a request of: %s\n" % self.data)
+        print ("Got a request of: %s\n" % self.data)
         if self.data.split(" ")[0] == 'GET':
-            req_file = self.data.split(" ")[1]
+            req_file = self.data.split(" ")[1] # /index.html
+            if req_file == '/':
+                req_file = '/index.html'
             try:
                 with open('www%s' % req_file,'r') as open_file:
                     file_content = open_file.read()
-                    if req_file.split(".")[1] != '':
-                        self.request.sendall(bytearray(f'HTTP/1.0 200 OK\r\nContent-Type: text/{req_file.split(".")[1]}\r\n\n{file_content}', 'utf-8'))
-                #self.request.sendall(bytearray(f'HTTP/1.0 404 NOT FOUND\r\n\n', 'utf-8'))
-            except (FileNotFoundError,IsADirectoryError) as exception:
-                print(exception)
+                    file_type = req_file.split(".")[1]
+                    if file_type != '': # html
+                        self.request.sendall(bytearray(f'HTTP/1.0 200 OK\r\nContent-Type: text/{file_type}\r\n\n{file_content}', 'utf-8'))
+            # 
+            except FileNotFoundError as fileNotFound:
+                print(fileNotFound)
                 self.request.sendall(bytearray(f'HTTP/1.0 404 NOT FOUND\r\n\n', 'utf-8'))
+            except IsADirectoryError as isADirectory:
+                print(isADirectory)
+                #self.request.sendall(bytearray(f'HTTP/1.0 301 The URL has been moved permanently\r\n\n', 'utf-8'))
+                
+                
+        else:
+            self.request.sendall(bytearray(f'HTTP/1.0 405 Method Not Allowed\r\n\n', 'utf-8'))
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
 

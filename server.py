@@ -27,15 +27,25 @@ import socketserver
 # try: curl -v -X GET http://127.0.0.1:8080/
 
 html = open('www/index.html','r').read()
+css = open('www/base.css','r').read()
 
 class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
         self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
-        self.request.sendall(bytearray(f'HTTP/1.0 200 OK\n\n{html}', 'utf-8'))
-
-
+        self.data = self.data.decode('utf-8')
+        #print ("Got a request of: %s\n" % self.data)
+        if self.data.split(" ")[0] == 'GET':
+            req_file = self.data.split(" ")[1]
+            try:
+                with open('www%s' % req_file,'r') as open_file:
+                    file_content = open_file.read()
+                    if req_file.split(".")[1] != '':
+                        self.request.sendall(bytearray(f'HTTP/1.0 200 OK\r\nContent-Type: text/{req_file.split(".")[1]}\r\n\n{file_content}', 'utf-8'))
+                #self.request.sendall(bytearray(f'HTTP/1.0 404 NOT FOUND\r\n\n', 'utf-8'))
+            except (FileNotFoundError,IsADirectoryError) as exception:
+                print(exception)
+                self.request.sendall(bytearray(f'HTTP/1.0 404 NOT FOUND\r\n\n', 'utf-8'))
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
 

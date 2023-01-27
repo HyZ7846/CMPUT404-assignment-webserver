@@ -32,4 +32,4 @@ References
 
 HTTP - Responses, [https://www.tutorialspoint.com/http/http_responses.htm](https://www.tutorialspoint.com/http/http_responses.htm)
 
-HTTP response status codes, [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
+HTTP response status codes, [https://en.wikipedia.org/wiki/List_of_HTTP_status_codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)

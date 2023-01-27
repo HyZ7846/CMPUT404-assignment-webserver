@@ -27,3 +27,9 @@ examples thus some of the code is Copyright © 2001-2013 Python
 Software Foundation; All Rights Reserved under the PSF license (GPL
 compatible) http://docs.python.org/2/library/socketserver.html
 
+References
+========================
+
+HTTP - Responses, [https://www.tutorialspoint.com/http/http_responses.htm](https://www.tutorialspoint.com/http/http_responses.htm)
+
+HTTP response status codes, [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)

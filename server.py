@@ -51,12 +51,12 @@ class MyWebServer(socketserver.BaseRequestHandler):
             
             
             except FileNotFoundError as fileNotFound: # handle file not found 404
-                print(fileNotFound)
+                #print(fileNotFound)
                 self.request.sendall(bytearray(f'HTTP/1.0 404 NOT FOUND\r\n\n', 'utf-8'))
                 
                 
             except IsADirectoryError as isADirectory:
-                print(isADirectory)
+                #print(isADirectory)
                 if req_file[-1] == '/': # handle request deep/
                     req_file += 'index.html'
                     with open('www%s' % req_file,'r') as open_file:

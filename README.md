@@ -7,6 +7,8 @@ See requirements.org (plain-text) for a description of the project.
 
 Make a simple webserver.
 
+Assignment submission by Mike Zhang
+
 Contributors / Licensing
 ========================
 

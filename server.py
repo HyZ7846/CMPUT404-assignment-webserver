@@ -25,37 +25,56 @@ import socketserver
 # run: python freetests.py
 
 # try: curl -v -X GET http://127.0.0.1:8080/
-
-html = open('www/index.html','r').read()
-css = open('www/base.css','r').read()
-
 class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
         self.data = self.request.recv(1024).strip()
         self.data = self.data.decode('utf-8')
-        print ("Got a request of: %s\n" % self.data)
+        #print("Got a request of: %s\n" % self.data)
         if self.data.split(" ")[0] == 'GET':
             req_file = self.data.split(" ")[1] # /index.html
-            if req_file == '/':
+            
+            if req_file == '/':# handle empty directory
                 req_file = '/index.html'
+            
+            
+            if '..' in req_file:# handle home directory
+                self.request.sendall(bytearray(f'HTTP/1.0 404 NOT FOUND\r\n\n', 'utf-8'))
+            
+            
             try:
                 with open('www%s' % req_file,'r') as open_file:
                     file_content = open_file.read()
                     file_type = req_file.split(".")[1]
                     if file_type != '': # html
                         self.request.sendall(bytearray(f'HTTP/1.0 200 OK\r\nContent-Type: text/{file_type}\r\n\n{file_content}', 'utf-8'))
-            # 
-            except FileNotFoundError as fileNotFound:
+            
+            
+            except FileNotFoundError as fileNotFound: # handle file not found 404
                 print(fileNotFound)
                 self.request.sendall(bytearray(f'HTTP/1.0 404 NOT FOUND\r\n\n', 'utf-8'))
+                
+                
             except IsADirectoryError as isADirectory:
                 print(isADirectory)
-                #self.request.sendall(bytearray(f'HTTP/1.0 301 The URL has been moved permanently\r\n\n', 'utf-8'))
-                
-                
-        else:
+                if req_file[-1] == '/': # handle request deep/
+                    req_file += 'index.html'
+                    with open('www%s' % req_file,'r') as open_file:
+                        file_content = open_file.read()
+                        file_type = req_file.split(".")[1]
+                    self.request.sendall(bytearray(f'HTTP/1.0 200 OK\r\nContent-Type: text/{file_type}\r\n\n{file_content}', 'utf-8'))
+                    
+                else: # handle request deep
+                    req_file += '/index.html'
+                    with open('www%s' % req_file,'r') as open_file:
+                        file_content = open_file.read()
+                        file_type = req_file.split(".")[1]
+                    self.request.sendall(bytearray(f'HTTP/1.0 301 The URL has been moved permanently\r\nContent-Type: text/{file_type}\r\n\n{file_content}', 'utf-8'))
+                    
+                    
+        else: # handle other method: POST/PUT other than GET
             self.request.sendall(bytearray(f'HTTP/1.0 405 Method Not Allowed\r\n\n', 'utf-8'))
+            
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
 
